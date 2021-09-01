@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="main">
+        <form class="form" id="form-1">
+          <h3 class="heading">Đăng kí Giữ Xe</h3>
+          <p class="desc">Học Viện Công Nghệ Bưu Chính Viễn Thông</p>
+      
+          <div class="spacer"></div>
+      
+          <div class="form-group">
+            <label for="fullname" class="form-label">Tên đầy đủ</label>
+            <input id="fullname" name="fullname" type="text" placeholder="VD: Mr. Huynh Trung Tru" class="form-control">
+            <span class="form-message"></span>
+          </div>
+      
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input id="email" name="email" type="text" placeholder="VD: email@domain.com" class="form-control">
+            <span class="form-message"></span>
+          </div>
+
+          <div class="form-group">
+            <label  class="form-label">SDT</label>
+            <input id="SDT" type="text" placeholder="VD: 0364559837" class="form-control">
+            <span class="form-message"></span>
+          </div>
+          <div class="form-group">
+            <label  class="form-label">Ngày Sinh</label>
+            <input id="NgaySinh" type="date"  name="trip-start"
+              value="2018-07-22"
+              min="1900-01-01" max="2021-12-31">
+            <span class="form-message"></span>
+          </div>
+
+          <div class="form-group">
+            <label  class="form-label">Chọn Giới Tính</label>
+            <select id="GioiTinh"  class="form-control">
+              <option value="">--Chọn giới tính--</option>
+              <option value="Nam">Nam</option>
+              <option value="Nu">Nữ</option>
+              <option value="Khac">Khác</option>
+            </select>
+            <span class="form-message"></span>
+          </div>   
+          <div class="form-group">
+            <label  class="form-label">Chọn Loại Xe</label>
+            <select id="LoaiXe"  class="form-control">
+              <option value="">--Chọn Loại Xe--</option>
+              <option value="1">Xe Máy</option>
+              <option value="2">Xe Đạp Điện</option>
+              <option value="3">Xe Ô tô</option>
+              
+            </select>
+            <span class="form-message"></span>
+          </div> 
+          <div class="form-group">
+            <label  class="form-label">Chọn Hãng Xe</label>
+            <select id="HangXe"  class="form-control">
+              <option value="">--Chọn Hãng Xe--</option>
+              <option value="1">Yamaha</option>
+              <option value="2">Toyota</option>
+              <option value="3">Honda</option>
+              <option value="4">Lambo</option>
+              <option value="5">VinCar</option>
+            </select>
+            <span class="form-message"></span>
+          </div>  
+          <div class="form-group">
+            <label  class="form-label">Số Xe</label>
+            <input id="SoXe" type="text" placeholder="VD: 76H150905" class="form-control">
+            <span class="form-message"></span>
+          </div>
+          <div class="form-group">
+            <label  class="form-label">Màu Xe</label>
+            <input id="MauXe" type="text" placeholder="VD: Xanh Đen" class="form-control">
+            <span class="form-message"></span>
+          </div>
+          <button  class="form-submit" type="button" onclick="UserAction()">Đăng ký</button>
+        </form>
+      
+      </div>
+</body>
+<script src="main.js"></script>
+<script >
+     function UserAction(){
+               var ten = document.querySelector('#fullname').value;
+               var email = document.querySelector('#email').value;
+               //var  dc= document.querySelector('#DiaChi').value;
+               var Ngay = document.querySelector('#NgaySinh').value;
+               var sdt = document.querySelector('#SDT').value;
+               var Gioi = document.querySelector('#GioiTinh').value;
+              var currentDate = new Date(); //use your date here
+                currentDate.toLocaleDateString('en-US');
+                var month = currentDate.getUTCMonth() + 1
+            var day = currentDate.getUTCDate();
+            var year = currentDate.getFullYear();
+            var stryear = year.toString()
+            var year2 = stryear.slice(2);
+            var shortStartDate = month + "/" + day + "/" + year2;
+               var json = JSON.stringify({
+                  'HoTen' : ten,
+                  'GioiTinh' : Gioi,
+                  'NgaySinh' : Ngay,
+                  'SDT' : sdt,
+                  'Email' : email,
+                  'NgayDK' : shortStartDate,
+                  'TrangThai' : 1
+               })
+              //  alert(json);
+               
+              const Post = async () =>{
+                fetch('http://127.0.0.1:5000/api/postUser', {
+                    method: 'POST', // or 'PUT'
+                    headers: {
+                         'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: json
+                    })
+                    .then(response => response.json())
+                    .then(async data => {
+                        fetch('http://127.0.0.1:5000/api/getOneUser/'+email, {
+                        method: 'GET', // or 'PUT'
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                          //var obj = JSON.parse(data)
+                          const idU = data[0].ID;
+                        console.log('Success2:', data);
+                           var idH = document.querySelector('#HangXe').value;
+                            var idL = document.querySelector('#LoaiXe').value;
+                            var MauXe = document.querySelector('#MauXe').value;
+                            var SoXe = document.querySelector('#SoXe').value;
+                            var jsonXe = JSON.stringify({
+                                'IDUser' : idU,
+                                'IDLoai' : idL,
+                                'IDHang' : idH,
+                                'MauXe' : MauXe,
+                                'SoXe' : SoXe
+                            })
+                            // alert(jsonXe);
+                        fetch('http://127.0.0.1:5000/api/postXe', {
+                            method: 'POST', // or 'PUT'
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'Access-Control-Allow-Origin': '*'
+                            },
+                            body: jsonXe
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                              alert("Thêm thành công !!!!")
+                            console.log('Success3:', data);
+                            location.replace("index.html");
+                            })
+                            .catch((error) => {
+                            console.error('Error3:', error);
+                            });
+                        })
+                        .catch((error) => {
+                        console.error('Error2:', error);
+                        });
+                    console.log('Success:', data);
+                    })
+                    .catch((error) => {
+                    console.error('Error:', error);
+                    });
+              }
+              Post();
+              
+              
+              
+
+                //get ID User 
+                
+                  
+                    
+            }
+    //mong muốn của chúng ta
+    Validator({
+        form:'#form-1',
+        formGroupSelector:'.form-group',
+        errorSelector:'.form-message',
+        rule:[
+            Validator.isRequired('#fullname'),
+            Validator.isRequired('#email'),
+            //Validator.isRequired('#avatar'),
+           // Validator.isRequired('#province'),
+            Validator.isEmail('#email'),
+            //Validator.isRequired('input[name="gender"]'),
+            //Validator.isMinLengh('#password',6),
+            // Validator.isConfirmed('#password_confirmation',function(){
+            //     return document.querySelector('#form-1 #password').value;
+            // },"password nhập lại không đúng")
+        ],
+        //onSubmit : 
+    });
+</script>
+</html>
